@@ -1,0 +1,53 @@
+.wrapper {
+  min-height: 100vh;
+  background-color: #f3f4f6; /* tailwind: bg-gray-100 */
+  padding: 2rem 1rem;
+}
+
+.viewerContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb; /* light gray */
+}
+
+.rpvPageLayer {
+  padding: 16px !important;
+  border-radius: 10px;
+  background-color: #ffffff;
+}
+
+.rpvTextLayer {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #222;
+}
+
+.rpvSidebar {
+  background-color: #f9fafb;
+}
+
+.rpvToolbar {
+  background-color: #fefefe;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+/* تضبيط شكل صفحة العرض */
+:global(.rpv-core__page-layer) {
+  padding: 24px !important;     /* تبعد الكلام من الأطراف */
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+/* تضبيط الطبقة الخارجية */
+:global(.rpv-core__inner-pages) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
