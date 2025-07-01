@@ -89,7 +89,7 @@ export default function BookList() {
               transition={{ duration: 0.4 }}
             >
               <h2 className="text-xl font-bold text-[#8B3302] mb-6 text-center">Top Rated Books</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6">
                 {topRated.map((book) => (
                   <BookCard key={book.bookID} image={book.coverImageUrl} title={book.title} author={book.author} bookID={book.bookID} showBookmark={true} brief={book.description} />
                 ))}
@@ -105,7 +105,7 @@ export default function BookList() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
                 <select value={category} onChange={(e) => { setCategory(e.target.value); setPageNumber(1); }} className="border px-3 py-2 rounded-md text-sm">
                   <option value="">Select Category</option>
                   {categories.map((cat) => (
@@ -120,7 +120,7 @@ export default function BookList() {
                 <input type="number" placeholder="Recent Years" value={recentYears} onChange={(e) => setRecentYears(e.target.value)} className="border px-3 py-2 rounded-md text-sm" />
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-6">
                 {books.map((book) => (
                   <BookCard key={book.bookID} image={book.coverImageUrl} title={book.title} author={book.author} bookID={book.bookID} brief={book.description} />
                 ))}
@@ -137,7 +137,7 @@ export default function BookList() {
               transition={{ duration: 0.4 }}
             >
               <h2 className="text-xl font-bold text-[#8B3302] mb-6 text-center">All Books</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-6">
                 {books.map((book) => (
                   <BookCard key={book.bookID} image={book.coverImageUrl} title={book.title} author={book.author} bookID={book.bookID} brief={book.description} />
                 ))}

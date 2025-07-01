@@ -3,9 +3,16 @@ import axios from "axios";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import BookCard from "../../SmallComponents/BookCard/BookCard";
 import { motion } from "framer-motion";
+import ChaptersList from "../../SmallComponents/ChaptersList/ChaptersList.jsx"
+import SummaryViewer from "../../SmallComponents/SummaryViewer/SummaryViewer.jsx"
+import ChapterQuiz from "../../SmallComponents/ChapterQuiz/ChapterQuiz.jsx"
 
 // Icons
 import { FaBookmark, FaBookOpen, FaGlobe, FaCalendarAlt, FaChartBar } from "react-icons/fa";
+
+
+
+
 
 // 📚 Component لعرض كل عنصر من تفاصيل الكتاب
 const BookInfoStat = ({ icon, label, value }) => (
@@ -15,6 +22,10 @@ const BookInfoStat = ({ icon, label, value }) => (
     <span className="font-semibold ml-1">{value}</span>
   </div>
 );
+
+
+
+
 
 // ⭐ Component التوصيات
 function ContentRecommendations({ bookID }) {
@@ -73,7 +84,11 @@ export default function BookDetails() {
   const [loading, setLoading] = useState(true);
   const [inLibrary, setInLibrary] = useState(false);
   const [loadingLibraryStatus, setLoadingLibraryStatus] = useState(true);
-  const [progressData, setProgressData] = useState({ lastPageRead: null, percentage: null });
+  const [showChapters, setShowChapters] = useState(false);
+  const [chapterList, setChapterList] = useState([]);
+  const [selectedChapterID, setSelectedChapterID] = useState(null);
+  const [viewMode, setViewMode] = useState(null); // "summary" أو "quiz"
+
 
   const navigate = useNavigate();
 
@@ -200,12 +215,16 @@ export default function BookDetails() {
   Read The Book
 </button>
 
-  <button className="flex-1 bg-[#F6F4DF] shadow-md hover:shadow-xl transition duration-200 font-semibold py-3 px-4 rounded-lg">
-    Generate Exam
-  </button>
-  <button className="flex-1 bg-[#F6F4DF] shadow-md hover:shadow-xl transition duration-200 font-semibold py-3 px-4 rounded-lg">
-    Generate Summary
-  </button>
+  <button
+  onClick={() => {
+    setChapterList(book.chapters); // ✅ استغلال الـ chapters الموجودة
+    setShowChapters(true);         // ✅ إظهار الكمبوننت
+  }}
+  className="flex-1 bg-[#F6F4DF] shadow-md hover:shadow-xl transition duration-200 font-semibold py-3 px-4 rounded-lg"
+>
+  Generate Summary OR Quiz
+</button>
+
 </div>
 
           </div>
@@ -222,7 +241,51 @@ export default function BookDetails() {
         {/* 📚 Similar Books */}
         <ContentRecommendations bookID={bookID} />
       </div>
-    </div>    </motion.div>
+    </div>
+    {showChapters && (
+  <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="bg-white p-6 rounded-xl max-w-xl w-full shadow-lg relative">
+      <button
+        onClick={() => setShowChapters(false)}
+        className="absolute top-3 right-3 text-white bg-[#8B3302] hover:bg-[#6b2401] px-3 py-1 rounded-md"
+      >
+        ✖
+      </button>
+
+      <ChaptersList
+        bookID={book.bookID}
+        chapters={chapterList}
+        onSelect={(chapterID, mode) => {
+  setSelectedChapterID(chapterID);
+  setViewMode(mode);
+  setShowChapters(false); // نقفل البانل بعد الاختيار
+}}
+
+      />
+    </div>
+  </div>
+)}
+    {selectedChapterID && viewMode === "summary" && (
+  <SummaryViewer
+    chapterID={selectedChapterID}
+    onClose={() => {
+      setSelectedChapterID(null);
+      setViewMode(null);
+    }}
+  />
+)}
+
+{selectedChapterID && viewMode === "quiz" && (
+  <ChapterQuiz
+    chapterID={selectedChapterID}
+    onClose={() => {
+      setSelectedChapterID(null);
+      setViewMode(null);
+    }}
+  />
+)}
+
+    </motion.div>
     
   );
 }

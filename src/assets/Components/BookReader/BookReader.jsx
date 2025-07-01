@@ -16,6 +16,9 @@ export default function BookReader() {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(0);
+  const [selectedText, setSelectedText] = useState('');
+  const [selectionPosition, setSelectionPosition] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const progressTimeout = useRef(null);
   const token = localStorage.getItem("userToken") || sessionStorage.getItem("userToken");
@@ -62,6 +65,7 @@ export default function BookReader() {
 
   const handlePageChange = (e) => {
     const page = e.currentPage + 1;
+    setCurrentPage(page);
 
     if (progressTimeout.current) {
       clearTimeout(progressTimeout.current);
@@ -71,6 +75,54 @@ export default function BookReader() {
       updateProgress(page, totalPages);
     }, 1000);
   };
+
+  const handleTextSelection = () => {
+    const selection = window.getSelection();
+    const text = selection.toString().trim();
+
+    if (text.length > 0) {
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+
+      setSelectedText(text);
+      setSelectionPosition({
+        top: rect.top + window.scrollY - 40,
+        left: rect.left + window.scrollX,
+      });
+    } else {
+      setSelectedText('');
+      setSelectionPosition(null);
+    }
+  };
+
+  const handleSaveNote = () => {
+    if (!selectedText) return;
+
+    axios.post("https://boookify.runasp.net/api/UserNotes", {
+      bookID: parseInt(bookID),
+      chapterID: currentPage,
+      content: selectedText
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then(() => {
+      alert("Note saved successfully");
+      setSelectedText('');
+      setSelectionPosition(null);
+      window.getSelection().removeAllRanges();
+    }).catch((err) => {
+      console.error("Error saving note:", err);
+      alert("Failed to save note.");
+    });
+  };
+
+  useEffect(() => {
+    document.addEventListener("mouseup", handleTextSelection);
+    return () => {
+      document.removeEventListener("mouseup", handleTextSelection);
+    };
+  }, [currentPage]);
 
   if (loading) return <div className="p-10 text-center text-lg">Loading PDF...</div>;
   if (!pdfUrl) return <div className="p-10 text-center text-red-600">PDF not found!</div>;
@@ -87,6 +139,29 @@ export default function BookReader() {
           />
         </Worker>
       </div>
+
+      {selectedText && selectionPosition && (
+        <div
+          style={{
+            position: 'absolute',
+            top: selectionPosition.top,
+            left: selectionPosition.left,
+            background: 'white',
+            border: '1px solid #ccc',
+            padding: '6px 12px',
+            borderRadius: '6px',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+            zIndex: 1000,
+          }}
+        >
+          <button
+            onClick={handleSaveNote}
+            className="text-sm text-white bg-[#8B3302] px-4 py-1 rounded hover:bg-[#722801]"
+          >
+            Save to Notes
+          </button>
+        </div>
+      )}
     </div>
   );
 }

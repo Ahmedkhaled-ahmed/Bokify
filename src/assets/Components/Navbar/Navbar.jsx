@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import logo from '../../Images/logo.png' 
-import { NavLink } from 'react-router-dom'
-import { useNavigate } from "react-router-dom";
+import logo from '../../Images/logo.png'
+import { NavLink, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function Navbar() {
     
     const navigate = useNavigate();
-    // حالة جديدة لتخزين رابط الصورة الشخصية
     const [profilePictureUrl, setProfilePictureUrl] = useState(null);
+    const [isMenuOpen, setIsMenuOpen] = useState(false); 
     const userToken = localStorage.getItem("userToken") || sessionStorage.getItem("userToken");
 
-    // جلب بيانات المستخدم عند تحميل المكون
     useEffect(() => {
-        // لا تقم بأي شيء إذا لم يكن هناك توكن
         if (userToken) {
             axios.get("https://boookify.runasp.net/api/Profile/me", {
                 headers: {
@@ -21,26 +18,28 @@ export default function Navbar() {
                 }
             })
             .then(res => {
-                // تحديث الحالة برابط الصورة الشخصية من الـ API
                 if (res.data && res.data.userProfile) {
                     setProfilePictureUrl(res.data.userProfile.profilePictureFullUrl);
                 }
             })
             .catch(err => {
                 console.error("Failed to fetch profile for Navbar:", err);
-                // في حالة الفشل، ستبقى الصورة هي الأيقونة الافتراضية
             });
         }
-    }, [userToken]); // يتم تنفيذ هذا التأثير عند تغيير التوكن (مثل تسجيل الدخول/الخروج)
+    }, [userToken]);
 
 
     function handleLogout() {
         localStorage.removeItem("userToken");
         sessionStorage.removeItem("userToken");
-        // مسح الصورة عند تسجيل الخروج
         setProfilePictureUrl(null);
         navigate("/login");
     }
+
+    // Function to close the mobile menu
+    const closeMenu = () => {
+        setIsMenuOpen(false);
+    };
 
     
     return (
@@ -52,21 +51,20 @@ export default function Navbar() {
                     </NavLink>
 
                     <div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+                        {/* Logout Button for Desktop */}
                         {userToken && (
                             <button
                                 onClick={handleLogout}
-                                className="bg-[#8B3302] text-white px-4 py-2 rounded hover:bg-white hover:text-[#8B3302] border border-[#8B3302] transition text-sm me-8"
+                                className="hidden md:block bg-[#8B3302] text-white px-4 py-2 rounded hover:bg-white hover:text-[#8B3302] border border-[#8B3302] transition text-sm me-2 sm:me-8"
                             >
                                 Logout
                             </button>
                         )}
                         
-                        {/* --- تم تعديل هذا الزر --- */}
                         <button
-                            onClick={() => navigate("/Profile")}
-                            className="rounded-full w-12 h-12 bg-gray-200 hover:bg-gray-300 flex items-center justify-center  focus:outline-none focus:ring-2 focus:ring-[#8B3302] focus:ring-opacity-50 transition-colors duration-200 overflow-hidden"
+                            onClick={() => { navigate("/Profile"); closeMenu(); }}
+                            className="rounded-full w-12 h-12 bg-gray-200 hover:bg-gray-300 flex items-center justify-center border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8B3302] focus:ring-opacity-50 transition-colors duration-200 overflow-hidden"
                         >
-                            {/* عرض الصورة إذا كانت موجودة، وإلا عرض الأيقونة الافتراضية */}
                             {profilePictureUrl ? (
                                 <img src={profilePictureUrl} alt="Profile" className="w-full h-full object-cover" />
                             ) : (
@@ -87,10 +85,13 @@ export default function Navbar() {
                             )}
                         </button>
                         
+                        {/* Hamburger Menu Button */}
                         <button
-                            data-collapse-toggle="navbar-user"
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
                             type="button"
                             className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                            aria-controls="navbar-user"
+                            aria-expanded={isMenuOpen}
                         >
                             <span className="sr-only">Open main menu</span>
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 17 14">
@@ -105,31 +106,52 @@ export default function Navbar() {
                         </button>
                     </div>
 
+                    {/* Links Container */}
                     <div
-                        className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
+                        className={`items-center justify-between w-full md:flex md:w-auto md:order-1 ${isMenuOpen ? 'block' : 'hidden'}`}
                         id="navbar-user"
                     >
                         <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-[#F6F4DF] md:space-x-12 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-[#F6F4DF]">
                             <li>
-                                <NavLink to="/" className={({ isActive }) => `block py-2 px-3 md:p-0 text-black ${isActive ? "font-bold" : "hover:font-bold"}`}>
+                                <NavLink to="/" onClick={closeMenu} className={({ isActive }) => `block py-2 px-3 md:p-0 text-black ${isActive ? "font-bold" : "hover:font-bold"}`}>
                                     Home
                                 </NavLink>
                             </li>
                             <li>
-                                <NavLink to="/My_library" className={({ isActive }) => `block py-2 px-3 md:p-0 text-black ${isActive ? "font-bold" : "hover:font-bold"}`}>
+                                <NavLink to="/My_library" onClick={closeMenu} className={({ isActive }) => `block py-2 px-3 md:p-0 text-black ${isActive ? "font-bold" : "hover:font-bold"}`}>
                                     My Library
                                 </NavLink>
                             </li>
+                            
                             <li>
-                                <NavLink to="/summarizes" className={({ isActive }) => `block py-2 px-3 md:p-0 text-black ${isActive ? "font-bold" : "hover:font-bold"}`}>
-                                    Summarizes
+                                <NavLink to="/OnDemandTools" onClick={closeMenu} className={({ isActive }) => `block py-2 px-3 md:p-0 text-black ${isActive ? "font-bold" : "hover:font-bold"}`}>
+                                    Upload Book
                                 </NavLink>
                             </li>
                             <li>
-                                <NavLink to="/Exams" className={({ isActive }) => `block py-2 px-3 md:p-0 text-black ${isActive ? "font-bold" : "hover:font-bold"}`}>
-                                    Exams
+                                <NavLink to="/Spaces" onClick={closeMenu} className={({ isActive }) => `block py-2 px-3 md:p-0 text-black ${isActive ? "font-bold" : "hover:font-bold"}`}>
+                                    Book Club
                                 </NavLink>
                             </li>
+                            <li>
+                                <NavLink to="/mynotes" onClick={closeMenu} className={({ isActive }) => `block py-2 px-3 md:p-0 text-black ${isActive ? "font-bold" : "hover:font-bold"}`}>
+                                    My Notes
+                                </NavLink>
+                            </li>
+                             {/* Logout Button for Mobile */}
+                            {userToken && (
+                                <li className="md:hidden border-t border-gray-200 mt-2 pt-2">
+                                    <button
+                                        onClick={() => {
+                                            handleLogout();
+                                            closeMenu();
+                                        }}
+                                        className="block w-full text-left py-2 px-3 text-red-600 font-semibold"
+                                    >
+                                        Logout
+                                    </button>
+                                </li>
+                            )}
                         </ul>
                     </div>
                 </div>

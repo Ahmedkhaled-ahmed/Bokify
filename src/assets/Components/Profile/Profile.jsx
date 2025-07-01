@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 
-// ========== أيقونات ==========
+// ========== Icons ==========
 const PencilIcon = (props) => (
     <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L13.196 5.232z" />
@@ -15,7 +15,6 @@ const CameraIcon = (props) => (
     </svg>
 );
 
-// FIX: Replaced Bootstrap Icons with inline SVG components to resolve the build error.
 const EyeIcon = (props) => (
     <svg {...props} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
         <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
@@ -238,14 +237,19 @@ export default function Profile() {
     return (
         <div className="bg-white min-h-screen font-sans mt-20">
             <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
+            
+            {/* Top Banner Section */}
             <div className="bg-[#F6F4DF] pb-24 pt-8 px-4 sm:px-8 ">
                 <div className="max-w-4xl mx-auto">
-                    <h1 className="text-3xl font-bold text-gray-800">{username || 'User Profile'}</h1>
+                    {/* The h1 title has been moved */}
                 </div>
             </div>
 
+            {/* Main Content Area */}
             <div className="max-w-6xl mx-auto -mt-20 px-4 sm:px-8">
-                <div className="relative mb-12 bg-white p-8 rounded-2xl shadow-lg">
+                <div className="relative mb-12 mt-4 bg-white p-8 rounded-2xl shadow-lg">
+                    
+                    {/* Profile Picture */}
                     <div className="absolute -top-12 left-1/2 -translate-x-1/2">
                         <div className="relative w-24 h-24">
                             <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center shadow-lg border-4 border-white overflow-hidden">
@@ -265,8 +269,12 @@ export default function Profile() {
                         </div>
                     </div>
 
-                    <div className="pt-16 flex flex-col items-center">
-                        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6 mt-8">
+                    {/* Profile Information Section */}
+                    <div className="pt-10 flex flex-col items-center">
+                        {/* Username - Moved to be under the picture */}
+                        <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">{username || 'User Profile'}</h1>
+
+                        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6">
                             <div className="space-y-6">
                                 <InfoField label="Name" value={username} onChange={setUsername} />
                                 <InfoField label="Age" value={age} onChange={setAge} />
@@ -278,7 +286,7 @@ export default function Profile() {
                                 <InfoField label="Interest" value={interest} onChange={setInterest} />
                             </div>
                         </div>
-                        <button onClick={handleSave} disabled={saving} className="mt-6 bg-[#8B3302] text-white px-6 py-2 rounded-md shadow-md hover:bg-[#722801] transition disabled:bg-gray-400">
+                        <button onClick={handleSave} disabled={saving} className="mt-8 bg-[#8B3302] text-white px-6 py-2 rounded-md shadow-md hover:bg-[#722801] transition disabled:bg-gray-400">
                             {saving ? "Saving..." : "Save Changes"}
                         </button>
                         <button onClick={() => setShowPasswordForm(!showPasswordForm)} className="mt-6 text-sm text-[#8B3302] hover:underline focus:outline-none">

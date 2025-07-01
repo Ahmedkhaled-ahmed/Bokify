@@ -23,6 +23,9 @@ import ResetPassword from "./assets/Components/ResetPassword/ResetPassword";
 import BookDetails from "./assets/Components/BookDetails/BookDetails";
 import BookReader from "./assets/Components/BookReader/BookReader";
 import Profile from "./assets/Components/Profile/Profile";
+import Spaces from "./assets/Components/Spaces/Spaces";
+import MyNotes from "./assets/Components/MyNotes/MyNotes";
+import OnDemandTools from "./assets/Components/OnDemandTools/OnDemandTools";
 
 // Component to wrap with AnimatePresence
 function AnimatedRoutes() {
@@ -41,6 +44,9 @@ function AnimatedRoutes() {
           <Route path="Exams" element={<Exams />} />
           <Route path="BookDetails" element={<BookDetails />} />
           <Route path="Profile" element={<Profile/>} />
+          <Route path="Spaces" element={<Spaces/>} />
+          <Route path="mynotes" element={<MyNotes/>} />
+          <Route path="OnDemandTools" element={<OnDemandTools/>} />
         </Route>
 
         <Route path="register" element={<Register />} />
